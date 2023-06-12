@@ -1,5 +1,5 @@
 # merkle-search-tree
-An abstract implementation of a Merkle Search Tree, structurally comparible with ATProto's instantiation.
+An abstract implementation of a Merkle Search Tree, structurally compatible with ATProto's instantiation.
 
 The goal of this implementation is to be simple and understandable, but not necessarily useful for any real-world applications.
 
