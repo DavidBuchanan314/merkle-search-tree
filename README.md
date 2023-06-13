@@ -1,6 +1,8 @@
 # merkle-search-tree
 An abstract implementation of a Merkle Search Tree, structurally compatible with ATProto's instantiation.
 
+As described in https://inria.hal.science/hal-02303490/document (*"Alex Auvolat, François Taïani. Merkle Search Trees: Efficient State-Based CRDTs in Open Networks. SRDS 2019 - 38th IEEE International Symposium on Reliable Distributed Systems, Oct 2019, Lyon, France. pp.1-10, ff10.1109/SRDS.2019.00032"*) and https://atproto.com/specs/repository
+
 The goal of this implementation is to be simple and understandable, but not necessarily useful for any real-world applications.
 
 Normally, a MST is layered over some existing key/value store. For simplicity, this one is not, which limits its usefulness. The tree structure exists only in memory. Although you can quite easily write code to serialise and deserialise a tree from, say, an atproto CAR file, you need to load the *whole* tree - there is no support for "lazy" loading of nodes on an ad-hoc basis. Again, this is for simplicity.
