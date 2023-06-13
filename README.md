@@ -14,3 +14,17 @@ I also plan to write a version that *does* layer over an existing key/value stor
 Also included is a script for generating graphviz graphs of a tree. Sample output:
 
 ![image](https://github.com/DavidBuchanan314/merkle-search-tree/assets/13520633/4647265a-29aa-4d76-8928-b863f5b300f9)
+
+Specializing the MSTNode class for use with ATProto's hash function and fanout (of 4) might look like this:
+
+```py
+from mst import MSTNode
+import hashlib
+
+class ATNode(MSTNode):
+	@staticmethod
+	def key_height(key: str) -> int:
+		digest = int.from_bytes(hashlib.sha256(key.encode()).digest(), "big")
+		leading_zeroes = 256 - digest.bit_length()
+		return leading_zeroes // 2
+```
