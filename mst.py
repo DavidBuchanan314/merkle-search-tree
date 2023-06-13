@@ -41,7 +41,11 @@ class MSTNode(ABC):
 
 	@classmethod
 	def empty_root(cls) -> Self:
-		return cls((None,), (), ())
+		return cls(
+			subtrees=(None,),
+			keys=(),
+			vals=()
+		)
 
 	@classmethod
 	def _from_optional(cls, value: Optional[Self]) -> Self:
@@ -134,14 +138,23 @@ class MSTNode(ABC):
 		cls = self.__class__ # maybe this could be a class method???
 
 		if key_height > tree_height: # we need to grow the tree
-			return cls((self,), (), ())._put_recursive(key, val, key_height, tree_height + 1)
+			return cls(
+				subtrees=(self,),
+				keys=(),
+				vals=()
+			)._put_recursive(key, val, key_height, tree_height + 1)
 		
 		if key_height < tree_height: # we need to look below
 			i = self._gte_index(key)
 			return cls(
-				tuple_replace_at(self.subtrees, i, cls._from_optional(self.subtrees[i])._put_recursive(key, val, key_height, tree_height - 1)),
-				self.keys,
-				self.vals
+				subtrees=tuple_replace_at(
+					self.subtrees, i,
+					cls._from_optional(self.subtrees[i])._put_recursive(
+						key, val, key_height, tree_height - 1
+					)
+				),
+				keys=self.keys,
+				vals=self.vals
 			)
 		
 		# we can insert here
@@ -159,17 +172,17 @@ class MSTNode(ABC):
 			if self.vals[i] == val:
 				return self # we can return our old self if there is no change
 			return cls(
-				self.subtrees,
-				self.keys,
-				tuple_replace_at(self.vals, i, val)
+				subtrees=self.subtrees,
+				keys=self.keys,
+				vals=tuple_replace_at(self.vals, i, val)
 			)
 		
 		return cls(
-			self.subtrees[:i] + \
+			subtrees = self.subtrees[:i] + \
 				cls._split_on_key(self.subtrees[i], key) + \
 				self.subtrees[i + 1:],
-			tuple_insert_at(self.keys, i, key),
-			tuple_insert_at(self.vals, i, val),
+			keys=tuple_insert_at(self.keys, i, key),
+			vals=tuple_insert_at(self.vals, i, val),
 		)
 	
 	@classmethod
@@ -179,12 +192,14 @@ class MSTNode(ABC):
 		i = tree._gte_index(key)
 		lsub, rsub = cls._split_on_key(tree.subtrees[i], key)
 		left = cls(
-			tree.subtrees[:i] + (lsub,),
-			tree.keys[:i], tree.vals[:i]
+			subtrees=tree.subtrees[:i] + (lsub,),
+			keys=tree.keys[:i],
+			vals=tree.vals[:i]
 		)._to_optional()
 		right = cls(
-			(rsub,) + tree.subtrees[i + 1:],
-			tree.keys[i:], tree.vals[i:]
+			subtrees=(rsub,) + tree.subtrees[i + 1:],
+			keys=tree.keys[i:],
+			vals=tree.vals[i:]
 		)._to_optional()
 		return left, right
 
@@ -201,19 +216,27 @@ class MSTNode(ABC):
 			if self.subtrees[i] is None:
 				return self # the key cannot be in this subtree, no change needed
 			return cls(
-				tuple_replace_at(self.subtrees, i, self.subtrees[i]._delete_recursive(key, key_height, tree_height - 1)),
-				self.keys,
-				self.vals
+				subtrees=tuple_replace_at(
+					self.subtrees,
+					i,
+					self.subtrees[i]._delete_recursive(key, key_height, tree_height - 1)
+				),
+				keys=self.keys,
+				vals=self.vals
 			)._to_optional()
 		
 		i = self._gte_index(key)
 		if i == len(self.keys) or self.keys[i] != key:
 			return self # key already not present
+		
 		assert(self.keys[i] == key) # sanity check (should always be true)
+
 		return cls(
-			self.subtrees[:i] + (cls._merge(self.subtrees[i], self.subtrees[i + 1]),) + self.subtrees[i + 2:],
-			tuple_remove_at(self.keys, i),
-			tuple_remove_at(self.vals, i)
+			subtrees=self.subtrees[:i] + (
+				cls._merge(self.subtrees[i], self.subtrees[i + 1]),
+			) + self.subtrees[i + 2:],
+			keys=tuple_remove_at(self.keys, i),
+			vals=tuple_remove_at(self.vals, i)
 		)._to_optional()
 	
 	@classmethod
@@ -223,14 +246,14 @@ class MSTNode(ABC):
 		if right is None:
 			return left
 		return left.__class__(
-			left.subtrees[:-1] + (
+			subtrees=left.subtrees[:-1] + (
 				cls._merge(
 					left.subtrees[-1],
 					right.subtrees[0]
 				),
 			 ) + right.subtrees[1:],
-			left.keys + right.keys,
-			left.vals + right.vals
+			keys=left.keys + right.keys,
+			vals=left.vals + right.vals
 		)._to_optional()
 
 
@@ -242,7 +265,7 @@ class MST:
 	# maybe this should just be __init__ idk
 	@classmethod
 	def new_with(cls: Type[Self], node_type: Type[MSTNode]) -> Self:
-		return cls(node_type.empty_root())
+		return cls(root=node_type.empty_root())
 
 	def height(self) -> int:
 		return self.root.height()
