@@ -8,3 +8,7 @@ Normally, a MST is layered over some existing key/value store. For simplicity, t
 CRUD operations are implemented, tree diffing operations are coming next, maybe.
 
 I also plan to write a version that *does* layer over an existing key/value store.
+
+Also included is a script for generating graphviz graphs of a tree. Sample output:
+
+![image](https://github.com/DavidBuchanan314/merkle-search-tree/assets/13520633/4647265a-29aa-4d76-8928-b863f5b300f9)
