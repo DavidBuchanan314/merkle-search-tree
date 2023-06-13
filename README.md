@@ -15,6 +15,8 @@ Also included is a script for generating graphviz graphs of a tree. Sample outpu
 
 ![image](https://github.com/DavidBuchanan314/merkle-search-tree/assets/13520633/4647265a-29aa-4d76-8928-b863f5b300f9)
 
+For testing purposes, I use `len()` for deciding the height of a key, as opposed to the more usual process of counting the number of leading zeroes from a hash.
+
 Specializing the MSTNode class for use with ATProto's hash function and fanout (of 4) might look like this:
 
 ```py

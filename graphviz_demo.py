@@ -9,28 +9,23 @@ class GraphableMST(MST):
 			dot.attr(label=title, labelloc="t")
 		dot.node("root", "root")
 		dot.edge("root", str(id(self.root)))
-		self.graph_node(dot, {}, self.root)
+		self.graph_node(dot, self.root)
 		return dot
 
-	def graph_node(self, dot: graphviz.Digraph, clusters: Dict[int, graphviz.Digraph], node: MSTNode):
+	def graph_node(self, dot: graphviz.Digraph, node: MSTNode):
 		members = []
 		sub = node.subtrees[0]
 		members.append(f"<{id(sub)}> ⬤")
 		if sub is not None:
 			dot.edge(f"{id(node)}:{id(sub)}:s", f"{id(sub)}:n")
-			self.graph_node(dot, clusters, sub)
+			self.graph_node(dot, sub)
 		for sub, k in zip(node.subtrees[1:], node.keys):
 			members.append(f"\"{k}\"\\l({node.key_height(k)})")
 			members.append(f"<{id(sub)}> ⬤")
 			if sub is not None:
 				dot.edge(f"{id(node)}:{id(sub)}:s", f"{id(sub)}:n")
-				self.graph_node(dot, clusters, sub)
-		level = node.height()
-		if level not in clusters:
-			clusters[level] = graphviz.Digraph()
-			clusters[level].attr(rank="same")
-		clusters[level].node(str(id(node)), " | ".join(members), fontname="monospace", fontsize="8pt")
-		dot.subgraph(clusters[level])
+				self.graph_node(dot, sub)
+		dot.node(str(id(node)), " | ".join(members), fontname="monospace", fontsize="8pt")
 
 if __name__ == "__main__":
 	class StrlenNode(MSTNode):
