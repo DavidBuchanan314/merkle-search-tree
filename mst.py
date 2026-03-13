@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from abc import ABC, abstractstaticmethod
 from typing import Tuple, Self, Optional, Any, Type, Iterable
 
-# key type - could be anything comparable, in theory
+# key type - could be anything comparable (with total order), in theory
 KTYPE = str
 # could be literally anything (will be CID object in atproto)
 VTYPE = Any
